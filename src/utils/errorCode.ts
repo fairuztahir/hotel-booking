@@ -5,6 +5,10 @@ enum ErrorType {
     setUpdateHotelNotExists = 10003,
     invalidUUIDString = 10004,
     delHotelNotExist = 10005,
+    getRoomFailed = 10100,
+    setRoomDuplicate = 10101,
+    setUpdateRoomNotExists = 10102,
+    delRoomNotExist = 10005,
 }
 
 const errMsg = {
@@ -15,8 +19,12 @@ const errMsg = {
     [ErrorType.setHotelInvalid]: "The following parameters are not correct. Please try again.",
     [ErrorType.setHotelEmailExist]: "The specified e-mail address already exists. Please try again.",
     [ErrorType.setUpdateHotelNotExists]: "The hotel you are trying to update doesn't exist. Please try again.",
-    [ErrorType.invalidUUIDString]: "Invalid type id in URL. Please try again.",
-    [ErrorType.delHotelNotExist]: "The hotel you are trying to delete doesn't exist. Please try again."
+    [ErrorType.invalidUUIDString]: "Invalid id type. Please try again.",
+    [ErrorType.delHotelNotExist]: "The hotel you are trying to delete doesn't exist. Please try again.",
+    [ErrorType.getRoomFailed]: "The room you are trying to retrieve doesn't exist. Please try again",
+    [ErrorType.setRoomDuplicate]: "Room name already exists. Please try again.",
+    [ErrorType.setUpdateRoomNotExists]: "The room you are trying to update doesn't exist. Please try again.",
+    [ErrorType.delRoomNotExist]: "The room number you are trying to delete doesn't exist. Please try again.",
 };
 
 const errCode = {

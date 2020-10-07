@@ -1,14 +1,9 @@
 import { BaseContext, Context } from "koa";
-import { request, summary, responsesAll, tagsAll, path, body } from "koa-swagger-decorator";
+import { request, summary, responsesAll, tagsAll, path, body, query } from "koa-swagger-decorator";
 import { Hotels, hotelSchema } from "../entities/hotels";
 import { getManager, IsNull, Repository, Not, Equal, Like } from "typeorm";
 import { resJson, ErrorType } from "../utils";
 import { validate, ValidationError } from "class-validator";
-
-// interface hotelDetails {
-//     Hotels: Hotels[],
-//     total_count: number
-// }
 
 @responsesAll({ 200: { description: "success" }, 400: { description: "bad request" }, 401: { description: "unauthorized, missing/wrong token" }})
 @tagsAll(["Hotel"])
@@ -16,12 +11,16 @@ export default class HotelController {
     
     @request("GET", "/hotels")
     @summary("Find all hotels")
+    @query({ page_size: { type: "number", required: true, description: "The size of data to display" },
+        page_number: { type: "number", required: true, description: "Page number to display on table"},
+        keyword: { type: "string", required: false, description: "Search key word for specific data"}
+    })
     public static async getlist(ctx: Context): Promise<void> {
         try {
-            const { page_size, page_number, keyword} = ctx.request.query;
-            const psize = Number(page_size) ? page_size : 10;
-            const pnumber = Number(page_number) < 1 ? 1 : page_number;
-            const pkeyword = String(keyword) || "";
+            const { page_size, page_number, keyword=""} = ctx.request.query;
+            const psize = Number(page_size) ? Number(page_size) : 10;
+            const pnumber = Number(page_number) < 1 ? 1 : Number(page_number);
+            const pkeyword = String(keyword);
             const offset = psize * (pnumber - 1);
             // get a hotel repository to perform operations with user
             const hotelRepository: Repository<Hotels> = getManager().getRepository(Hotels);
@@ -35,7 +34,8 @@ export default class HotelController {
                     created_at: "DESC"
                 },
                 take: psize,
-                skip: offset
+                skip: offset,
+                relations: ['rooms']
             });
 
             return resJson({ ctx, status: 200, data: hotels, param: { total: total } });
@@ -113,6 +113,7 @@ export default class HotelController {
     @request("PUT", "/hotel/{id}")
     @summary("Update hotel info by id")
     @path({ id: { type:"string", required: true, description: "Hotel id" }})
+    @body(hotelSchema)
     public static async setUpdateHotel (ctx: Context): Promise<void> {
         try {
             const { address, email, name } = ctx.request.body;

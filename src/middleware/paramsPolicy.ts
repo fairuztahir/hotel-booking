@@ -15,7 +15,16 @@ const validateParams = async (ctx: Context, next: Next, schema: any, params?: an
     }
 };
 
-// hotel module
+// hotel validation
+export const getHotelsParams = async (ctx: Context, next: Next) => {
+    const schema = Joi.object({
+        page_size: Joi.string().required(),
+        page_number: Joi.string().required(),
+        keyword: Joi.string().allow("").optional(),
+    });
+    await validateParams(ctx, next, schema, ctx.request.query);
+};
+
 export const setHotelParams = async (ctx: Context, next: Next) => {
     const schema = Joi.object({
         name: Joi.string().min(10).max(80).required(),
@@ -32,4 +41,40 @@ export const updateHotelParam = async (ctx: Context, next: Next) => {
         name: Joi.string().min(10).max(80).optional()
     }).or("email", "name", "address");
     await validateParams(ctx, next, schema);
+};
+
+// room validation
+export const getRoomsParams = async (ctx: Context, next: Next) => {
+    const schema = Joi.object({
+        page_size: Joi.string().required(),
+        page_number: Joi.string().required(),
+        hotel_id: Joi.string().required(),
+    });
+    await validateParams(ctx, next, schema, ctx.request.query);
+};
+
+export const updateRoomParams = async (ctx: Context, next: Next) => {
+    const schema = Joi.object({
+        name: Joi.string().min(1).max(10).required(),
+        status: Joi.boolean().optional()
+    });
+    await validateParams(ctx, next, schema);
+};
+
+export const setRoomParams = async (ctx: Context, next: Next) => {
+    const schema = Joi.object({
+        name: Joi.string().min(1).max(10).required(),
+        hotel_id: Joi.string().required(),
+    });
+    await validateParams(ctx, next, schema);
+};
+
+// cust validation
+export const getCustParams = async (ctx: Context, next: Next) => {
+    const schema = Joi.object({
+        page_size: Joi.string().required(),
+        page_number: Joi.string().required(),
+        keyword: Joi.string().allow("").optional(),
+    });
+    await validateParams(ctx, next, schema, ctx.request.query);
 };
